@@ -9,6 +9,9 @@ pub use position::*;
 
 // Scalars
 #[derive(Debug, PartialEq, Copy, Clone)]
+pub struct TemporalDuration(pub f64);
+
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Mass(pub f64);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
