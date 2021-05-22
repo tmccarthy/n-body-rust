@@ -65,6 +65,17 @@ impl ops::Mul<Scalar> for Vector2D {
     }
 }
 
+impl ops::Div<Scalar> for Vector2D {
+    type Output = Vector2D;
+
+    fn div(self, rhs: Scalar) -> Self::Output {
+        Vector2D {
+            x: self.x / rhs,
+            y: self.y / rhs,
+        }
+    }
+}
+
 impl ops::Mul<Vector2D> for Scalar {
     type Output = Vector2D;
 

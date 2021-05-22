@@ -36,7 +36,7 @@ impl Gravity {
 impl Universe {
     pub fn step_forward(self: Universe, dt: TemporalDuration) -> Universe {
         let new_bodies = self.bodies.iter().map(|object: &Body| {
-            let new_position = Position(object.position.0 + (object.velocity.0 * dt.0));
+            let new_position = object.position + object.velocity * dt;
 
             let mut total_force = Force(Vector2D::zero());
 
@@ -44,12 +44,12 @@ impl Universe {
                 if *subject != *object {
                     let force: &Force = &self.gravity.due_to_bodies(object, &subject);
 
-                    total_force = Force(total_force.0 + force.0);
+                    total_force = total_force + *force;
                 }
 
             }
 
-            let acceleration = Acceleration(total_force.0 * (1.0 / object.mass.0));
+            let acceleration = total_force / object.mass;
 
             // TODO this should probably be injected
             let new_velocity = euler_method::next_velocity(acceleration, object.velocity, dt);
@@ -66,4 +66,9 @@ impl Universe {
             ..(self)
         }
     }
+
+    // TODO compute kinetic energy
+    // TODO compute potential energy
+    // TODO compute total energy
+    // TODO compute momentum
 }
