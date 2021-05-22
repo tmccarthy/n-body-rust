@@ -16,6 +16,14 @@ pub struct TemporalDuration(pub Scalar);
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Mass(pub Scalar);
 
+impl Mul<Velocity> for Mass {
+    type Output = Momentum;
+
+    fn mul(self, rhs: Velocity) -> Self::Output {
+        Momentum(self.0 * rhs.0)
+    }
+}
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Velocity(pub Vector2D);
 
@@ -54,5 +62,15 @@ impl ops::Div<Mass> for Force {
 
     fn div(self, rhs: Mass) -> Self::Output {
         Acceleration(self.0 / rhs.0)
+    }
+}
+
+pub struct Momentum(pub Vector2D);
+
+impl ops::Add<Momentum> for Momentum {
+    type Output = Momentum;
+
+    fn add(self, rhs: Momentum) -> Self::Output {
+        Momentum(self.0 + rhs.0)
     }
 }

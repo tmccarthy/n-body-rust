@@ -67,8 +67,11 @@ impl Universe {
         }
     }
 
+    pub fn momentum(self: Universe) -> Momentum {
+        self.bodies.iter().fold(Momentum(Vector2D::zero()), |acc, body| acc + (body.mass * body.velocity))
+    }
+
     // TODO compute kinetic energy
     // TODO compute potential energy
     // TODO compute total energy
-    // TODO compute momentum
 }
