@@ -1,21 +1,23 @@
 use core::ops;
 use std::ops::Add;
 
-mod vector;
-mod position;
-
-pub use vector::*;
 pub use position::*;
+pub use vector::*;
+
+mod position;
+mod vector;
+
+pub type Scalar = f64;
 
 // Scalars
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct TemporalDuration(pub f64);
+pub struct TemporalDuration(pub Scalar);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Mass(pub f64);
+pub struct Mass(pub Scalar);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Distance(pub f64);
+pub struct Distance(pub Scalar);
 
 impl Distance {
     pub fn between(left: Position, right: Position) -> Distance {
@@ -24,10 +26,10 @@ impl Distance {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Velocity(Vector2D);
+pub struct Velocity(pub Vector2D);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Acceleration(Vector2D);
+pub struct Acceleration(pub Vector2D);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Force(Vector2D);
+pub struct Force(pub Vector2D);

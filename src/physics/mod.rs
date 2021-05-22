@@ -1,7 +1,8 @@
 use crate::physics::primitives::*;
 
-mod primitives;
+mod gravity;
 mod numerical_methods;
+mod primitives;
 
 struct Body {
     mass: Mass,
