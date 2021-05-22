@@ -10,6 +10,10 @@ pub struct Vector2D {
 }
 
 impl Vector2D {
+    pub fn zero() -> Vector2D {
+        Vector2D { x: 0.0, y: 0.0 }
+    }
+
     pub fn new(x: Scalar, y: Scalar) -> Vector2D {
         Vector2D { x, y }
     }

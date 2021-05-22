@@ -1,11 +1,5 @@
 use crate::physics::primitives::*;
 
-mod gravity;
-mod numerical_methods;
-mod primitives;
-
-struct Body {
-    mass: Mass,
-    position: Position,
-    velocity: Velocity,
-}
+pub mod gravity;
+pub mod numerical_methods;
+pub mod primitives;

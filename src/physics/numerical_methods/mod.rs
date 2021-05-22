@@ -1,1 +1,1 @@
-mod euler_method;
+pub mod euler_method;
