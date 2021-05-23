@@ -3,9 +3,13 @@ use crate::physics::primitives::{Force, Mass, Position, Scalar, Vector2D};
 #[derive(Copy, Clone)]
 pub struct GravitationalConstant(Scalar);
 
+impl GravitationalConstant {
+    pub const UNIVERSAL: GravitationalConstant = GravitationalConstant(6.67430e-11);
+}
+
 #[derive(Copy, Clone)]
 pub struct Gravity {
-    gravitational_constant: GravitationalConstant,
+    pub gravitational_constant: GravitationalConstant,
 }
 
 impl Gravity {

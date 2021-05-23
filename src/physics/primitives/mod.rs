@@ -13,6 +13,14 @@ pub type Scalar = f64;
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct TemporalDuration(pub Scalar);
 
+impl Mul<Scalar> for TemporalDuration {
+    type Output = TemporalDuration;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        TemporalDuration(self.0 * rhs)
+    }
+}
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Mass(pub Scalar);
 

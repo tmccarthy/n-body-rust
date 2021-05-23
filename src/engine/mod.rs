@@ -4,14 +4,14 @@ use std::collections::HashMap;
 use crate::physics::numerical_methods::euler_method;
 
 #[derive(Eq, PartialEq, Copy, Clone)]
-struct BodyId(u64);
+pub struct BodyId(u64);
 
 #[derive(Copy, Clone)]
 pub struct Body {
-    id: BodyId,
-    mass: Mass,
-    position: Position,
-    velocity: Velocity,
+    pub id: BodyId,
+    pub mass: Mass,
+    pub position: Position,
+    pub velocity: Velocity,
 }
 
 impl PartialEq for Body {
@@ -23,8 +23,8 @@ impl PartialEq for Body {
 impl Eq for Body {}
 
 pub struct Universe {
-    gravity: Gravity,
-    bodies: Vec<Body>,
+    pub gravity: Gravity,
+    pub bodies: Vec<Body>,
 }
 
 impl Gravity {
