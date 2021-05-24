@@ -47,7 +47,7 @@ fn main() {
         }
 
         if let Some(args) = e.update_args() {
-            ui_driven_update(time_scale, &universe, &args);
+            universe = ui_driven_update(time_scale, &universe, &args);
         }
     }
 }
@@ -66,8 +66,8 @@ fn render(graphics: & mut GlGraphics, viewport: &Viewport, universe: &Universe, 
     });
 }
 
-fn ui_driven_update(time_scale: Scalar, universe: &Universe, args: &UpdateArgs) -> () {
+fn ui_driven_update(time_scale: Scalar, old_universe: &Universe, args: &UpdateArgs) -> Universe {
     let ui_dt = TemporalDuration(args.dt);
     let dt = ui_dt * time_scale;
-    universe.step_forward(dt);
+    old_universe.step_forward(dt)
 }
