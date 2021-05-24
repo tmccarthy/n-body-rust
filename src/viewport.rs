@@ -1,6 +1,6 @@
 use crate::physics::primitives::{Scalar, Position, Vector2D};
 use piston::RenderArgs;
-use graphics::math::{transform_pos, Vec2d};
+use graphics::math::{transform_pos, Vec2d, transform_vec};
 
 impl From<Vector2D> for Vec2d {
     fn from(vector2d: Vector2D) -> Self {
@@ -25,9 +25,11 @@ impl Viewport {
             y: position.0.y / y_size,
         });
 
-        let window_transform_matrix = render_args.viewport().abs_transform();
+        let window_transform_matrix = graphics::math::invert(render_args.viewport().abs_transform());
 
-        let [window_x, window_y] = transform_pos(window_transform_matrix, Vec2d::from(position_relative_to_viewport_normalised.0));
+        let graphics_library_vec = Vec2d::from(position_relative_to_viewport_normalised.0);
+
+        let [window_x, window_y] = transform_vec(window_transform_matrix, graphics_library_vec);
 
         (window_x, window_y)
     }

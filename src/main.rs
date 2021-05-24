@@ -1,3 +1,5 @@
+extern crate graphics;
+
 use glutin_window::GlutinWindow as Window;
 use graphics::{clear, Graphics};
 use opengl_graphics::{GlGraphics, OpenGL};
@@ -29,7 +31,7 @@ fn main() {
     let mut graphics = GlGraphics::new(opengl);
 
     let mut universe: Universe = universes::pluto_and_charon();
-    let time_scale: Scalar = 1e4;
+    let time_scale: Scalar = 1e6;
 
     let viewport: Viewport = Viewport {
         x_min: -20000000.0,
@@ -56,7 +58,9 @@ fn render(graphics: & mut GlGraphics, viewport: &Viewport, universe: &Universe, 
         for body in &universe.bodies {
             let (window_x, window_y) = viewport.convert_for_window(args, body.position);
 
-            graphics::ellipse([1.0, 1.0, 1.0, 1.0], circle(window_x, window_y, 5.0), graphics::math::identity(), graphics);
+            let circle = circle(window_x, window_y, 0.01);
+
+            graphics::ellipse([1.0, 1.0, 1.0, 1.0], circle, graphics::math::identity(), graphics);
         }
     });
 }
