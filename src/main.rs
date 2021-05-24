@@ -1,23 +1,19 @@
 use glutin_window::GlutinWindow as Window;
+use graphics::{clear, Graphics};
 use opengl_graphics::{GlGraphics, OpenGL};
-use piston::event_loop::{EventSettings, Events};
+use piston::event_loop::{Events, EventSettings};
 use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
 use piston::window::WindowSettings;
+
 use crate::engine::Universe;
 use crate::physics::primitives::{Scalar, TemporalDuration};
+use crate::viewport::{Viewport};
+use graphics::ellipse::circle;
 
 mod engine;
 mod physics;
 mod universes;
-
-struct Viewport {
-    x_min: Scalar,
-    x_max: Scalar,
-    y_min: Scalar,
-    y_max: Scalar,
-}
-
-
+mod viewport;
 
 fn main() {
     let opengl = OpenGL::V3_2;
@@ -30,28 +26,43 @@ fn main() {
 
     let mut events = Events::new(EventSettings::new());
 
+    let mut graphics = GlGraphics::new(opengl);
+
     let mut universe: Universe = universes::pluto_and_charon();
     let time_scale: Scalar = 1e4;
 
-    let viewport: Viewport = todo!();
+    let viewport: Viewport = Viewport {
+        x_min: -20000000.0,
+        x_max: 20000000.0,
+        y_min: -20000000.0,
+        y_max: 20000000.0,
+    };
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
-            render(distance_scale, &universe, &args);
+            render(&mut graphics, &viewport, &universe, &args);
         }
 
         if let Some(args) = e.update_args() {
-            ui_driven_update(time_scale, &mut universe, &args);
+            ui_driven_update(time_scale, &universe, &args);
         }
     }
 }
 
-fn render(viewport: &Viewport, universe: &Universe, args: &RenderArgs) -> () {
-    todo!()
+fn render(graphics: & mut GlGraphics, viewport: &Viewport, universe: &Universe, args: &RenderArgs) -> () {
+    graphics.draw(args.viewport(), |canvas, graphics| {
+        clear([0.0, 0.0, 0.0, 1.0], graphics);
+
+        for body in &universe.bodies {
+            let (window_x, window_y) = viewport.convert_for_window(args, body.position);
+
+            graphics::ellipse([1.0, 1.0, 1.0, 1.0], circle(window_x, window_y, 5.0), graphics::math::identity(), graphics);
+        }
+    });
 }
 
-fn ui_driven_update(time_scale: Scalar, universe: &mut Universe, args: &UpdateArgs) -> () {
+fn ui_driven_update(time_scale: Scalar, universe: &Universe, args: &UpdateArgs) -> () {
     let ui_dt = TemporalDuration(args.dt);
-    let dt = time_scale * ui_dt;
+    let dt = ui_dt * time_scale;
     universe.step_forward(dt);
 }

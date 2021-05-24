@@ -5,8 +5,8 @@ use crate::physics::primitives::Scalar;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Vector2D {
-    x: Scalar,
-    y: Scalar,
+    pub x: Scalar,
+    pub y: Scalar,
 }
 
 impl Vector2D {

@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use crate::physics::numerical_methods::euler_method;
 
 #[derive(Eq, PartialEq, Copy, Clone)]
-pub struct BodyId(u64);
+pub struct BodyId(pub u64);
 
 #[derive(Copy, Clone)]
 pub struct Body {
@@ -34,7 +34,7 @@ impl Gravity {
 }
 
 impl Universe {
-    pub fn step_forward(self: Universe, dt: TemporalDuration) -> Universe {
+    pub fn step_forward(&self, dt: TemporalDuration) -> Universe {
         let new_bodies = self.bodies.iter().map(|object: &Body| {
             let new_position = object.position + object.velocity * dt;
 
@@ -63,7 +63,7 @@ impl Universe {
 
         Universe {
             bodies: new_bodies,
-            ..(self)
+            ..(*self)
         }
     }
 
