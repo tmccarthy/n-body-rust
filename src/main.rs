@@ -11,6 +11,7 @@ use crate::engine::Universe;
 use crate::physics::primitives::{Scalar, TemporalDuration};
 use crate::viewport::{Viewport};
 use graphics::ellipse::circle;
+use graphics::rectangle::centered_square;
 
 mod engine;
 mod physics;
@@ -20,7 +21,7 @@ mod viewport;
 fn main() {
     let opengl = OpenGL::V3_2;
 
-    let mut window: Window = WindowSettings::new("n-body", [200, 200])
+    let mut window: Window = WindowSettings::new("n-body", [800, 800])
         .graphics_api(opengl)
         .exit_on_esc(true)
         .build()
@@ -58,9 +59,9 @@ fn render(graphics: & mut GlGraphics, viewport: &Viewport, universe: &Universe, 
         for body in &universe.bodies {
             let (window_x, window_y) = viewport.convert_for_window(args, body.position);
 
-            let circle = circle(window_x, window_y, 0.01);
+            let circle = centered_square(window_x, window_y, 40.0);
 
-            graphics::ellipse([1.0, 1.0, 1.0, 1.0], circle, graphics::math::identity(), graphics);
+            graphics::ellipse([1.0, 1.0, 1.0, 1.0], circle, canvas.transform, graphics);
         }
     });
 }
