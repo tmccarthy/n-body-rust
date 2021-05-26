@@ -53,7 +53,7 @@ fn main() {
 }
 
 fn render(graphics: & mut GlGraphics, viewport: &Viewport, universe: &Universe, args: &RenderArgs) -> () {
-    graphics.draw(args.viewport(), |canvas, graphics| {
+    graphics.draw(args.viewport(), |context, graphics| {
         clear([0.0, 0.0, 0.0, 1.0], graphics);
 
         for body in &universe.bodies {
@@ -61,7 +61,7 @@ fn render(graphics: & mut GlGraphics, viewport: &Viewport, universe: &Universe, 
 
             let circle = centered_square(window_x, window_y, 10.0);
 
-            graphics::ellipse([1.0, 1.0, 1.0, 1.0], circle, canvas.transform, graphics);
+            graphics::ellipse([1.0, 1.0, 1.0, 1.0], circle, context.transform, graphics);
         }
     });
 }
