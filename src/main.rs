@@ -35,10 +35,10 @@ fn main() {
     let time_scale: Scalar = 1e6;
 
     let viewport: Viewport = Viewport {
-        x_min: -20000000.0,
-        x_max: 20000000.0,
-        y_min: -20000000.0,
-        y_max: 20000000.0,
+        x_min: -1e8,
+        x_max: 1e8,
+        y_min: -1e8,
+        y_max: 1e8,
     };
 
     while let Some(e) = events.next(&mut window) {
@@ -59,7 +59,7 @@ fn render(graphics: & mut GlGraphics, viewport: &Viewport, universe: &Universe, 
         for body in &universe.bodies {
             let (window_x, window_y) = viewport.convert_for_window(args, body.position);
 
-            let circle = centered_square(window_x, window_y, 40.0);
+            let circle = centered_square(window_x, window_y, 10.0);
 
             graphics::ellipse([1.0, 1.0, 1.0, 1.0], circle, canvas.transform, graphics);
         }

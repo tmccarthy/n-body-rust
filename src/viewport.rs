@@ -20,17 +20,35 @@ impl Viewport {
         let x_size = (self.x_max - self.x_min).abs();
         let y_size = (self.y_max - self.y_min).abs();
 
-        let position_relative_to_viewport_normalised: Position = Position(Vector2D {
-            x: position.0.x / x_size,
-            y: position.0.y / y_size,
-        });
+        let [window_x_size, window_y_size] = render_args.window_size;
 
-        let window_transform_matrix = graphics::math::invert(render_args.viewport().abs_transform());
+        let (normalised_x, normalised_y) = (position.0.x / x_size, position.0.y / y_size);
 
-        let graphics_library_vec = Vec2d::from(position_relative_to_viewport_normalised.0);
+        (normalised_x * window_x_size + (window_x_size / 2.0), normalised_y * window_y_size + (window_y_size / 2.0))
+    }
+}
 
-        let [window_x, window_y] = transform_vec(window_transform_matrix, graphics_library_vec);
+mod test {
+    use crate::viewport::Viewport;
+    use piston::RenderArgs;
+    use crate::physics::primitives::{Position, Vector2D};
 
-        (window_x, window_y)
+    #[test]
+    fn test_convert_for_window() {
+        let viewport = Viewport {
+            x_min: -50.0,
+            x_max: 50.0,
+            y_min: -50.0,
+            y_max: 50.0,
+        };
+
+        let render_args = RenderArgs {
+            ext_dt: 0.0,
+            window_size: [200.0, 200.0],
+            draw_size: [200, 200],
+        };
+
+        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(0.0, 0.0))), (100.0, 100.0));
+        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(25.0, 25.0))), (150.0, 150.0));
     }
 }
