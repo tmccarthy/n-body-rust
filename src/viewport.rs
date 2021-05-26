@@ -17,14 +17,24 @@ pub struct Viewport {
 
 impl Viewport {
     pub fn convert_for_window(self: &Viewport, render_args: &RenderArgs, position: Position) -> (f64, f64) {
-        let x_size = (self.x_max - self.x_min).abs();
-        let y_size = (self.y_max - self.y_min).abs();
+        let window_origin_in_viewport = (self.x_min, self.y_max);
+        let window_bottom_right_in_viewport = (self.x_max, self.y_min);
+        let window_size_in_viewport = (
+            (window_bottom_right_in_viewport.0 - window_origin_in_viewport.0).abs(),
+            (window_bottom_right_in_viewport.1 - window_origin_in_viewport.1).abs(),
+        );
+
+        let normalised_position_within_viewport = (
+            (position.0.x - window_origin_in_viewport.0) / window_size_in_viewport.0,
+            -1.0 * ((position.0.y - window_origin_in_viewport.1) / window_size_in_viewport.1),
+        );
 
         let [window_x_size, window_y_size] = render_args.window_size;
 
-        let (normalised_x, normalised_y) = (position.0.x / x_size, position.0.y / y_size);
-
-        (normalised_x * window_x_size + (window_x_size / 2.0), normalised_y * window_y_size + (window_y_size / 2.0))
+        (
+            normalised_position_within_viewport.0 * window_x_size,
+            normalised_position_within_viewport.1 * window_y_size,
+        )
     }
 }
 
@@ -34,7 +44,7 @@ mod test {
     use crate::physics::primitives::{Position, Vector2D};
 
     #[test]
-    fn test_convert_for_window() {
+    fn test_convert_for_window_viewport_around_origin() {
         let viewport = Viewport {
             x_min: -50.0,
             x_max: 50.0,
@@ -49,6 +59,25 @@ mod test {
         };
 
         assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(0.0, 0.0))), (100.0, 100.0));
-        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(25.0, 25.0))), (150.0, 150.0));
+        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(25.0, 25.0))), (150.0, 50.0));
+    }
+
+    #[test]
+    fn test_convert_for_window_viewport_positive() {
+        let viewport = Viewport {
+            x_min: 10.0,
+            x_max: 50.0,
+            y_min: 10.0,
+            y_max: 50.0,
+        };
+
+        let render_args = RenderArgs {
+            ext_dt: 0.0,
+            window_size: [200.0, 200.0],
+            draw_size: [200, 200],
+        };
+
+        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(0.0, 0.0))), (-50.0, 250.0));
+        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(25.0, 25.0))), (75.0, 125.0));
     }
 }
