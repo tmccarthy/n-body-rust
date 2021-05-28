@@ -1,6 +1,6 @@
-use crate::physics::primitives::{Scalar, Position, Vector2D};
+use crate::physics::primitives::{Position, Scalar, Vector2D};
+use graphics::math::{transform_pos, transform_vec, Vec2d};
 use piston::RenderArgs;
-use graphics::math::{transform_pos, Vec2d, transform_vec};
 
 impl From<Vector2D> for Vec2d {
     fn from(vector2d: Vector2D) -> Self {
@@ -37,7 +37,11 @@ impl Viewport {
         }
     }
 
-    pub fn convert_for_window(self: &Viewport, render_args: &RenderArgs, position: Position) -> (f64, f64) {
+    pub fn convert_for_window(
+        self: &Viewport,
+        render_args: &RenderArgs,
+        position: Position,
+    ) -> (f64, f64) {
         let window_origin_in_viewport = (self.x_min, self.y_max);
         let window_bottom_right_in_viewport = (self.x_max, self.y_min);
         let window_size_in_viewport = (
@@ -60,9 +64,9 @@ impl Viewport {
 }
 
 mod test {
+    use crate::physics::primitives::{Position, Vector2D};
     use crate::viewport::Viewport;
     use piston::RenderArgs;
-    use crate::physics::primitives::{Position, Vector2D};
 
     #[test]
     fn test_convert_for_window_viewport_around_origin() {
@@ -79,8 +83,14 @@ mod test {
             draw_size: [200, 200],
         };
 
-        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(0.0, 0.0))), (100.0, 100.0));
-        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(25.0, 25.0))), (150.0, 50.0));
+        assert_eq!(
+            viewport.convert_for_window(&render_args, Position(Vector2D::new(0.0, 0.0))),
+            (100.0, 100.0)
+        );
+        assert_eq!(
+            viewport.convert_for_window(&render_args, Position(Vector2D::new(25.0, 25.0))),
+            (150.0, 50.0)
+        );
     }
 
     #[test]
@@ -98,7 +108,13 @@ mod test {
             draw_size: [200, 200],
         };
 
-        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(0.0, 0.0))), (-50.0, 250.0));
-        assert_eq!(viewport.convert_for_window(&render_args, Position(Vector2D::new(25.0, 25.0))), (75.0, 125.0));
+        assert_eq!(
+            viewport.convert_for_window(&render_args, Position(Vector2D::new(0.0, 0.0))),
+            (-50.0, 250.0)
+        );
+        assert_eq!(
+            viewport.convert_for_window(&render_args, Position(Vector2D::new(25.0, 25.0))),
+            (75.0, 125.0)
+        );
     }
 }

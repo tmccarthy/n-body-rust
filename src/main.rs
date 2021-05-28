@@ -3,11 +3,11 @@ extern crate graphics;
 use std::cmp::{max, min};
 
 use glutin_window::GlutinWindow as Window;
-use graphics::{clear, Graphics};
 use graphics::ellipse::circle;
 use graphics::rectangle::centered_square;
+use graphics::{clear, Graphics};
 use opengl_graphics::{GlGraphics, OpenGL};
-use piston::event_loop::{Events, EventSettings};
+use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
 use piston::window::WindowSettings;
 
@@ -52,7 +52,12 @@ fn main() {
     }
 }
 
-fn render(graphics: & mut GlGraphics, viewport: &Viewport, universe: &Universe, args: &RenderArgs) -> () {
+fn render(
+    graphics: &mut GlGraphics,
+    viewport: &Viewport,
+    universe: &Universe,
+    args: &RenderArgs,
+) -> () {
     graphics.draw(args.viewport(), |context, graphics| {
         clear([0.0, 0.0, 0.0, 1.0], graphics);
 

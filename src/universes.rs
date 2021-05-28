@@ -1,6 +1,6 @@
-use crate::engine::{Universe, Body, BodyId};
-use crate::physics::primitives::*;
+use crate::engine::{Body, BodyId, Universe};
 use crate::physics::gravity::{GravitationalConstant, Gravity};
+use crate::physics::primitives::*;
 
 pub fn pluto_and_charon() -> Universe {
     let g = GravitationalConstant::UNIVERSAL;
@@ -20,7 +20,17 @@ pub fn pluto_and_charon() -> Universe {
     };
 
     Universe {
-        gravity: Gravity { gravitational_constant: g },
-        bodies: vec![pluto, charon]
+        gravity: Gravity {
+            gravitational_constant: g,
+        },
+        bodies: vec![pluto, charon],
     }
+}
+
+pub fn random<FW, FP>(n_bodies: u16, gen_mass: FW, gen_position: FP) -> Universe
+where
+    FW: Fn() -> Mass,
+    FP: Fn() -> Position,
+{
+    todo!()
 }

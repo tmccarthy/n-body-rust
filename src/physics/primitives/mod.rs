@@ -1,8 +1,8 @@
 use core::ops;
 
 pub use position::*;
+use std::ops::{Add, Mul};
 pub use vector::*;
-use std::ops::{Mul, Add};
 
 mod position;
 mod vector;
