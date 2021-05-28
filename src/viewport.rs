@@ -16,6 +16,27 @@ pub struct Viewport {
 }
 
 impl Viewport {
+    pub fn zero() -> Viewport {
+        Viewport::around_origin(0.0, 0.0)
+    }
+
+    pub fn around_origin(x_size: Scalar, y_size: Scalar) -> Viewport {
+        Viewport::around(Position(Vector2D::zero()), x_size, y_size)
+    }
+
+    pub fn square_around(centre: Position, size: Scalar) -> Viewport {
+        Viewport::around(centre, size, size)
+    }
+
+    pub fn around(centre: Position, x_size: Scalar, y_size: Scalar) -> Viewport {
+        Viewport {
+            x_min: centre.0.x - x_size / 2.0,
+            x_max: centre.0.x + x_size / 2.0,
+            y_min: centre.0.y - y_size / 2.0,
+            y_max: centre.0.y + y_size / 2.0,
+        }
+    }
+
     pub fn convert_for_window(self: &Viewport, render_args: &RenderArgs, position: Position) -> (f64, f64) {
         let window_origin_in_viewport = (self.x_min, self.y_max);
         let window_bottom_right_in_viewport = (self.x_max, self.y_min);

@@ -24,6 +24,14 @@ impl Mul<Scalar> for TemporalDuration {
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Mass(pub Scalar);
 
+impl Add<Mass> for Mass {
+    type Output = Mass;
+
+    fn add(self, rhs: Mass) -> Self::Output {
+        Mass(self.0 + rhs.0)
+    }
+}
+
 impl Mul<Velocity> for Mass {
     type Output = Momentum;
 

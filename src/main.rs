@@ -1,7 +1,11 @@
 extern crate graphics;
 
+use std::cmp::{max, min};
+
 use glutin_window::GlutinWindow as Window;
 use graphics::{clear, Graphics};
+use graphics::ellipse::circle;
+use graphics::rectangle::centered_square;
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::{Events, EventSettings};
 use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
@@ -9,9 +13,7 @@ use piston::window::WindowSettings;
 
 use crate::engine::Universe;
 use crate::physics::primitives::{Scalar, TemporalDuration};
-use crate::viewport::{Viewport};
-use graphics::ellipse::circle;
-use graphics::rectangle::centered_square;
+use crate::viewport::Viewport;
 
 mod engine;
 mod physics;
@@ -34,12 +36,9 @@ fn main() {
     let mut universe: Universe = universes::pluto_and_charon();
     let time_scale: Scalar = 1e6;
 
-    let viewport: Viewport = Viewport {
-        x_min: -1e8,
-        x_max: 1e8,
-        y_min: -1e8,
-        y_max: 1e8,
-    };
+    let viewport_size = 4e8;
+
+    let mut viewport: Viewport = update_viewport_for(&universe, viewport_size);
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
@@ -48,6 +47,7 @@ fn main() {
 
         if let Some(args) = e.update_args() {
             universe = ui_driven_update(time_scale, &universe, &args);
+            viewport = update_viewport_for(&universe, viewport_size);
         }
     }
 }
@@ -70,4 +70,10 @@ fn ui_driven_update(time_scale: Scalar, old_universe: &Universe, args: &UpdateAr
     let ui_dt = TemporalDuration(args.dt);
     let dt = ui_dt * time_scale;
     old_universe.step_forward(dt)
+}
+
+fn update_viewport_for(universe: &Universe, viewport_size: Scalar) -> Viewport {
+    let centre_of_mass = universe.centre_of_mass();
+
+    Viewport::square_around(centre_of_mass, viewport_size)
 }

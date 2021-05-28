@@ -71,6 +71,14 @@ impl Universe {
         self.bodies.iter().fold(Momentum(Vector2D::zero()), |acc, body| acc + (body.mass * body.velocity))
     }
 
+    pub fn centre_of_mass(self: &Universe) -> Position {
+        // TODO could be more performant
+        let total_mass = self.bodies.iter().fold(Mass(0.0), |acc, body| acc + body.mass);
+
+        Position(self.bodies.iter().fold(Vector2D::zero(), |acc, body| acc + (body.mass.0 * body.position.0)) / total_mass.0)
+    }
+
+    // TODO compute centre of mass
     // TODO compute kinetic energy
     // TODO compute potential energy
     // TODO compute total energy
