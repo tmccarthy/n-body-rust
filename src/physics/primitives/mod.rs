@@ -1,6 +1,7 @@
 use core::ops;
 
 pub use position::*;
+use std::cmp::Ordering;
 use std::ops::{Add, Mul};
 pub use vector::*;
 

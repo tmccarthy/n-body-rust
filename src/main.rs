@@ -16,6 +16,7 @@ use crate::physics::primitives::{Mass, Position, Scalar, TemporalDuration, Vecto
 use crate::universes::Vector2DDistribution;
 use crate::viewport::Viewport;
 use rand::distributions::Uniform;
+use std::ops::Range;
 
 mod engine;
 mod physics;
@@ -69,17 +70,42 @@ fn render(
     universe: &Universe,
     args: &RenderArgs,
 ) -> () {
+    let min_mass = universe
+        .bodies
+        .iter()
+        .map(|b| b.mass)
+        .reduce(|left, right| Mass(Scalar::min(left.0, right.0)))
+        .unwrap_or(Mass(0.0));
+    let max_mass = universe
+        .bodies
+        .iter()
+        .map(|b| b.mass)
+        .reduce(|left, right| Mass(Scalar::max(left.0, right.0)))
+        .unwrap_or(Mass(0.0));
+
+    let mass_range = (min_mass..max_mass);
+
     graphics.draw(args.viewport(), |context, graphics| {
         clear([0.0, 0.0, 0.0, 1.0], graphics);
 
         for body in &universe.bodies {
             let (window_x, window_y) = viewport.convert_for_window(args, body.position);
 
-            let circle = centered_square(window_x, window_y, 10.0);
+            let circle =
+                centered_square(window_x, window_y, scale_radius_by(&mass_range, body.mass));
 
             graphics::ellipse([1.0, 1.0, 1.0, 1.0], circle, context.transform, graphics);
         }
     });
+}
+
+fn scale_radius_by(all_masses: &Range<Mass>, mass: Mass) -> graphics::math::Scalar {
+    const MAX_RADIUS: graphics::math::Scalar = 5.0;
+    const MIN_RADIUS: graphics::math::Scalar = 1.0;
+
+    ((mass.0 - all_masses.start.0) / (all_masses.end.0 - all_masses.start.0))
+        * (MAX_RADIUS - MIN_RADIUS)
+        + MIN_RADIUS
 }
 
 fn ui_driven_update(time_scale: Scalar, old_universe: &Universe, args: &UpdateArgs) -> Universe {
