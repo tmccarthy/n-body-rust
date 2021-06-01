@@ -1,6 +1,10 @@
 use crate::engine::{Body, BodyId, Universe};
 use crate::physics::gravity::{GravitationalConstant, Gravity};
 use crate::physics::primitives::*;
+use core::iter;
+use rand::distributions::uniform::{SampleBorrow, SampleUniform, UniformSampler};
+use rand::distributions::{Distribution, Standard, Uniform};
+use rand::Rng;
 
 pub fn pluto_and_charon() -> Universe {
     let g = GravitationalConstant::UNIVERSAL;
@@ -27,10 +31,46 @@ pub fn pluto_and_charon() -> Universe {
     }
 }
 
-pub fn random<FW, FP>(n_bodies: u16, gen_mass: FW, gen_position: FP) -> Universe
-where
-    FW: Fn() -> Mass,
-    FP: Fn() -> Position,
-{
-    todo!()
+pub fn random(
+    n_bodies: u16,
+    mass_distribution: impl Distribution<Scalar>,
+    position_distribution: impl Distribution<Vector2D>,
+) -> Universe {
+    let body_ids = (0..n_bodies).map(|i| BodyId(i as u64));
+    let masses = mass_distribution.sample_iter(rand::thread_rng());
+    let positions = position_distribution.sample_iter(rand::thread_rng());
+    let velocities = iter::repeat(Velocity(Vector2D::zero()));
+
+    let bodies = body_ids
+        .zip(masses)
+        .zip(positions)
+        .zip(velocities)
+        .map(|(((id, mass), position_vector), velocity)| Body {
+            id,
+            mass: Mass(mass),
+            position: Position(position_vector),
+            velocity,
+        })
+        .collect();
+
+    Universe {
+        gravity: Gravity::UNIVERSAL,
+        bodies,
+    }
+}
+
+pub struct Vector2DDistribution {
+    pub x_min: Scalar,
+    pub x_max: Scalar,
+    pub y_min: Scalar,
+    pub y_max: Scalar,
+}
+
+impl Distribution<Vector2D> for Vector2DDistribution {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Vector2D {
+        Vector2D {
+            x: rng.gen_range((self.x_min..self.x_max)),
+            y: rng.gen_range((self.y_min..self.y_max)),
+        }
+    }
 }

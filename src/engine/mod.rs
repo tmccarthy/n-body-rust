@@ -6,7 +6,6 @@ use std::collections::HashMap;
 #[derive(Eq, PartialEq, Copy, Clone)]
 pub struct BodyId(pub u64);
 
-#[derive(Copy, Clone)]
 pub struct Body {
     pub id: BodyId,
     pub mass: Mass,
@@ -34,6 +33,10 @@ impl Gravity {
 }
 
 impl Universe {
+    pub fn add_body(&mut self, body: Body) -> () {
+        self.bodies.push(body);
+    }
+
     pub fn step_forward(&self, dt: TemporalDuration) -> Universe {
         let new_bodies = self
             .bodies

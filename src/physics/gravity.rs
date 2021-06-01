@@ -13,6 +13,10 @@ pub struct Gravity {
 }
 
 impl Gravity {
+    pub const UNIVERSAL: Gravity = Gravity {
+        gravitational_constant: GravitationalConstant::UNIVERSAL,
+    };
+
     pub fn due_to(
         self: Gravity,
         object_position: Position,

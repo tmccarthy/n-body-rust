@@ -11,9 +11,11 @@ use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
 use piston::window::WindowSettings;
 
-use crate::engine::Universe;
-use crate::physics::primitives::{Scalar, TemporalDuration};
+use crate::engine::{Body, BodyId, Universe};
+use crate::physics::primitives::{Mass, Position, Scalar, TemporalDuration, Vector2D, Velocity};
+use crate::universes::Vector2DDistribution;
 use crate::viewport::Viewport;
+use rand::distributions::Uniform;
 
 mod engine;
 mod physics;
@@ -33,8 +35,17 @@ fn main() {
 
     let mut graphics = GlGraphics::new(opengl);
 
-    let mut universe: Universe = universes::pluto_and_charon();
-    let time_scale: Scalar = 1e6;
+    let mut universe: Universe = universes::random(
+        100,
+        Uniform::new(0.0, 1e21),
+        Vector2DDistribution {
+            x_min: -1e8,
+            x_max: 1e8,
+            y_min: -1e8,
+            y_max: 1e8,
+        },
+    );
+    let time_scale: Scalar = 1e4;
 
     let viewport_size = 4e8;
 
