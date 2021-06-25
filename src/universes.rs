@@ -1,4 +1,4 @@
-use crate::engine::{Body, BodyId, Universe};
+use crate::engine::{Body, Universe};
 use crate::physics::gravity::{GravitationalConstant, Gravity};
 use crate::physics::primitives::*;
 use core::iter;
@@ -10,14 +10,12 @@ pub fn pluto_and_charon() -> Universe {
     let g = GravitationalConstant::UNIVERSAL;
 
     let pluto = Body {
-        id: BodyId(0),
         mass: Mass(1.303e22),
         position: Position(Vector2D::zero()),
         velocity: Velocity(Vector2D::zero()),
     };
 
     let charon = Body {
-        id: BodyId(1),
         mass: Mass(1.586e21),
         position: Position(Vector2D::new(19587000.0, 0.0)),
         velocity: Velocity(Vector2D::new(0.0, 210.0)),
@@ -36,17 +34,15 @@ pub fn random(
     mass_distribution: impl Distribution<Scalar>,
     position_distribution: impl Distribution<Vector2D>,
 ) -> Universe {
-    let body_ids = (0..n_bodies).map(|i| BodyId(i as u64));
     let masses = mass_distribution.sample_iter(rand::thread_rng());
     let positions = position_distribution.sample_iter(rand::thread_rng());
     let velocities = iter::repeat(Velocity(Vector2D::zero()));
 
-    let bodies = body_ids
-        .zip(masses)
+    let bodies = masses
         .zip(positions)
         .zip(velocities)
-        .map(|(((id, mass), position_vector), velocity)| Body {
-            id,
+        .take(n_bodies as usize)
+        .map(|((mass, position_vector), velocity)| Body {
             mass: Mass(mass),
             position: Position(position_vector),
             velocity,

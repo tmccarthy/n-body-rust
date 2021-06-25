@@ -11,7 +11,7 @@ use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
 use piston::window::WindowSettings;
 
-use crate::engine::{Body, BodyId, Universe};
+use crate::engine::{Body, Universe};
 use crate::physics::primitives::{Mass, Position, Scalar, TemporalDuration, Vector2D, Velocity};
 use crate::universes::Vector2DDistribution;
 use crate::viewport::Viewport;

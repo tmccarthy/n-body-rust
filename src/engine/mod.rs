@@ -3,23 +3,17 @@ use crate::physics::numerical_methods::euler_method;
 use crate::physics::primitives::*;
 use std::collections::HashMap;
 
-#[derive(Eq, PartialEq, Copy, Clone)]
-pub struct BodyId(pub u64);
-
 pub struct Body {
-    pub id: BodyId,
     pub mass: Mass,
     pub position: Position,
     pub velocity: Velocity,
 }
 
-impl PartialEq for Body {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
+impl Body {
+    pub fn momentum(&self) -> Momentum {
+        self.mass * self.velocity
     }
 }
-
-impl Eq for Body {}
 
 pub struct Universe {
     pub gravity: Gravity,
@@ -47,7 +41,7 @@ impl Universe {
                 let mut total_force = Force(Vector2D::zero());
 
                 for subject in &self.bodies {
-                    if *subject != *object {
+                    if !std::ptr::eq(subject, object) {
                         let force: &Force = &self.gravity.due_to_bodies(object, &subject);
 
                         total_force = total_force + *force;
@@ -77,7 +71,7 @@ impl Universe {
         self.bodies
             .iter()
             .fold(Momentum(Vector2D::zero()), |acc, body| {
-                acc + (body.mass * body.velocity)
+                acc + body.momentum()
             })
     }
 
