@@ -20,5 +20,5 @@ pub fn collide(left: &Body, right: &Body, dt: TemporalDuration) -> Option<Body> 
 }
 
 fn collision_radius(left: &Body, right: &Body) -> Scalar {
-    (left.mass.0 + right.mass.0) * 10.0
+    (left.mass.0 + right.mass.0) * 3.5e-22 * 1e5
 }
