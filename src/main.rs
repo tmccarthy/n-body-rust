@@ -55,7 +55,7 @@ fn main() {
             y_max: 1e8,
         },
     );
-    let time_scale: Scalar = 1e4;
+    let time_scale: Scalar = 3e4;
 
     let viewport_size = 4e8;
 
