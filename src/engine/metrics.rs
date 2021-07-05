@@ -26,39 +26,3 @@ impl Metric {
         }
     }
 }
-
-//
-// pub trait Metric<T: ToString + ?Sized> {
-//     const SYMBOL: &'static str;
-//     fn compute_from(universe: Universe) -> T;
-// }
-//
-// pub struct NumBodies;
-//
-// impl Metric<usize> for NumBodies {
-//     const SYMBOL: &'static str = "n";
-//
-//     fn compute_from<'a>(universe: Universe) -> usize {
-//         universe.bodies.len()
-//     }
-// }
-//
-// pub struct Momentum;
-//
-// impl Metric<Vector2D> for Momentum {
-//     const SYMBOL: &'static str = "Σp̃";
-//
-//     fn compute_from(universe: Universe) -> Vector2D {
-//         universe.momentum().0
-//     }
-// }
-//
-// pub struct KineticEnergy;
-//
-// impl Metric<Scalar> for KineticEnergy {
-//     const SYMBOL: &'static str = "ΣEₖ";
-//
-//     fn compute_from(universe: Universe) -> Scalar {
-//         universe.kinetic_energy().0
-//     }
-// }

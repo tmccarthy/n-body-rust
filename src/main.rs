@@ -140,13 +140,15 @@ fn draw_metrics<C: CharacterCache<Texture = Texture>, const N: usize>(
     universe: &Universe,
     metrics: [Metric; N],
 ) -> Result<(), ()> {
-    let complete_string = metrics.iter()
-        .map(|m| format!("{}: {}", m.symbol(), m.compute_from(universe)))
-        .collect::<Vec<String>>()
-        .join("\n\r");
+    let lines = metrics.iter()
+        .map(|m| format!("{}: {}", m.symbol(), m.compute_from(universe)));
 
-    graphics::text(graphics::color::WHITE, 10, &complete_string, character_cache, context.trans(10.0, 10.0).transform, graphics)
-        .map_err(|_| ())
+    for (index, line) in lines.enumerate() {
+        graphics::text(graphics::color::WHITE, 10, &line, character_cache, context.trans(10.0, ((index + 1) as f64) * 10.0).transform, graphics)
+            .map_err(|_| ())?
+    }
+
+    Ok(())
 }
 
 fn make_character_cache<'a>() -> Result<GlyphCache<'a>, CharCacheError> {
@@ -169,7 +171,6 @@ fn make_character_cache<'a>() -> Result<GlyphCache<'a>, CharCacheError> {
 enum CharCacheError {
     SelectFontError(font_kit::error::SelectionError),
     FontInMemoryError,
-    CopyFontDataError,
     GlyphCacheError,
 }
 
