@@ -91,3 +91,13 @@ impl ops::Add<Momentum> for Momentum {
         Momentum(self.0 + rhs.0)
     }
 }
+
+pub struct Energy(pub Scalar);
+
+impl ops::Add<Energy> for Energy {
+    type Output = Energy;
+
+    fn add(self, rhs: Energy) -> Self::Output {
+        Energy(self.0 + rhs.0)
+    }
+}

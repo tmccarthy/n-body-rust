@@ -5,6 +5,8 @@ use crate::physics::gravity::Gravity;
 use crate::physics::numerical_methods::euler_method;
 use crate::physics::primitives::*;
 
+pub mod metrics;
+
 #[derive(Debug, Copy, Clone)]
 pub struct Body {
     pub mass: Mass,
@@ -58,7 +60,7 @@ impl Universe {
                 let collision_result: Option<Body> = collide(&object_after_all_collisions, subject, dt);
 
                 if collision_result.is_none() {
-                    total_force = total_force + self.gravity.due_to_bodies(object, &subject);
+                    total_force = total_force + self.gravity.due_to_bodies(&object_after_all_collisions, &subject);
                 } else {
                     indexes_of_deleted_bodies.insert(subject_index);
                 }
@@ -86,7 +88,7 @@ impl Universe {
         }
     }
 
-    pub fn momentum(self: Universe) -> Momentum {
+    pub fn momentum(self: &Universe) -> Momentum {
         self.bodies
             .iter()
             .fold(Momentum(Vector2D::zero()), |acc, body| {
@@ -108,7 +110,12 @@ impl Universe {
         )
     }
 
-    // TODO compute centre of mass
+    pub fn kinetic_energy(self: &Universe) -> Energy {
+        self.bodies
+            .iter()
+            .fold(Energy(0.0), |acc, body| acc + Energy(body.mass.0 * body.velocity.0.magnitude().powi(2)))
+    }
+
     // TODO compute kinetic energy
     // TODO compute potential energy
     // TODO compute total energy

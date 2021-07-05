@@ -1,4 +1,6 @@
 use core::ops;
+use std::fmt::{Display, Formatter};
+use std::fmt;
 use std::ops::Mul;
 
 use crate::physics::primitives::Scalar;
@@ -84,6 +86,12 @@ impl ops::Mul<Vector2D> for Scalar {
             x: self * rhs.x,
             y: self * rhs.y,
         }
+    }
+}
+
+impl Display for Vector2D {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "[{}, {}]", self.x.to_string(), self.y.to_string())
     }
 }
 
