@@ -6,8 +6,6 @@ use crate::physics::gravity::Gravity;
 use crate::physics::numerical_methods::{euler_method, OdeAlgorithm};
 use crate::physics::primitives::*;
 use crate::physics::primitives::*;
-use chashmap::CHashMap;
-use rayon::prelude::*;
 
 pub mod metrics;
 pub mod universe;
@@ -18,14 +16,14 @@ pub struct Engine<A: OdeAlgorithm<Vector2D, Scalar>> {
 
 impl<A: OdeAlgorithm<Vector2D, Scalar>> Engine<A> {
     pub fn step_forward(self: &Engine<A>, universe: &Universe, dt: TemporalDuration) -> Universe {
-        let mut indexes_of_deleted_bodies: CHashMap<usize, ()> = CHashMap::new();
+        let mut indexes_of_deleted_bodies: HashSet<usize> = HashSet::new();
 
         let new_bodies = universe
             .bodies
-            .par_iter()
+            .iter()
             .enumerate()
             .filter_map(|(object_index, object)| {
-                if indexes_of_deleted_bodies.contains_key(&object_index) {
+                if indexes_of_deleted_bodies.contains(&object_index) {
                     return None;
                 }
 
@@ -38,7 +36,7 @@ impl<A: OdeAlgorithm<Vector2D, Scalar>> Engine<A> {
 
                 for (subject_index, subject) in universe.bodies.iter().enumerate() {
                     if std::ptr::eq(subject, object)
-                        || indexes_of_deleted_bodies.contains_key(&subject_index)
+                        || indexes_of_deleted_bodies.contains(&subject_index)
                     {
                         continue;
                     }
@@ -52,7 +50,7 @@ impl<A: OdeAlgorithm<Vector2D, Scalar>> Engine<A> {
                                 .gravity
                                 .due_to_bodies(&object_after_all_collisions, &subject);
                     } else {
-                        indexes_of_deleted_bodies.insert(subject_index, ());
+                        indexes_of_deleted_bodies.insert(subject_index);
                     }
 
                     object_after_all_collisions =
