@@ -2,7 +2,7 @@ use crate::physics::primitives::{Scalar, Vector2D};
 
 pub mod euler_method;
 
-pub trait OdeAlgorithm<Y, T> {
+pub trait OdeAlgorithm<Y, T>: Sync {
     fn next_y<F>(self: &Self, y_prime: F, y_0: Y, t_0: T, h: T) -> Y
     where
         F: Fn(T, Y) -> Y;

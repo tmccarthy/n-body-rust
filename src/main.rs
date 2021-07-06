@@ -48,7 +48,7 @@ fn main() {
     let mut charachter_cache: GlyphCache = make_character_cache().unwrap();
 
     let mut universe: Universe = universes::random(
-        100,
+        300,
         Uniform::new(0.0, 1e21),
         BoxedVector2DDistribution {
             x_min: -1e8,
@@ -137,9 +137,15 @@ fn scale_radius_by(all_masses: &Range<Mass>, mass: Mass) -> graphics::math::Scal
     const MAX_RADIUS: graphics::math::Scalar = 5.0;
     const MIN_RADIUS: graphics::math::Scalar = 1.0;
 
-    ((mass.0 - all_masses.start.0) / (all_masses.end.0 - all_masses.start.0))
+    let scaled_radius = ((mass.0 - all_masses.start.0) / (all_masses.end.0 - all_masses.start.0))
         * (MAX_RADIUS - MIN_RADIUS)
-        + MIN_RADIUS
+        + MIN_RADIUS;
+
+    if scaled_radius.is_finite() {
+        scaled_radius
+    } else {
+        MAX_RADIUS
+    }
 }
 
 fn ui_driven_update<A: OdeAlgorithm<Vector2D, Scalar>>(
