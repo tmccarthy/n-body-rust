@@ -25,7 +25,7 @@ use crate::engine::Engine;
 use crate::graphics::Transformed;
 use crate::physics::numerical_methods::OdeAlgorithm;
 use crate::physics::primitives::{Mass, Position, Scalar, TemporalDuration, Vector2D, Velocity};
-use crate::universes::Vector2DDistribution;
+use crate::universes::{BoxedVector2DDistribution, CircularVector2DDistribution};
 use crate::viewport::Viewport;
 
 mod engine;
@@ -50,11 +50,15 @@ fn main() {
     let mut universe: Universe = universes::random(
         100,
         Uniform::new(0.0, 1e21),
-        Vector2DDistribution {
+        BoxedVector2DDistribution {
             x_min: -1e8,
             x_max: 1e8,
             y_min: -1e8,
             y_max: 1e8,
+        },
+        CircularVector2DDistribution {
+            magnitude_min: 0.0,
+            magnitude_max: 5e2,
         },
     );
     let time_scale: Scalar = 3e4;
