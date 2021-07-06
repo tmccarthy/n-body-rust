@@ -18,6 +18,7 @@ impl Body {
 pub struct Universe {
     pub gravity: Gravity,
     pub bodies: Vec<Body>,
+    pub age: TemporalDuration,
 }
 
 impl Gravity {

@@ -3,17 +3,19 @@ use std::collections::{HashMap, HashSet};
 use crate::engine::universe::{Body, Universe};
 use crate::physics::collision::collide;
 use crate::physics::gravity::Gravity;
-use crate::physics::numerical_methods::euler_method;
+use crate::physics::numerical_methods::{euler_method, OdeAlgorithm};
 use crate::physics::primitives::*;
 use crate::physics::primitives::*;
 
 pub mod metrics;
 pub mod universe;
 
-pub struct Engine {}
+pub struct Engine<A: OdeAlgorithm<Vector2D, Scalar>> {
+    pub numerical_method: A,
+}
 
-impl Engine {
-    pub fn step_forward(self: &Engine, universe: &Universe, dt: TemporalDuration) -> Universe {
+impl<A: OdeAlgorithm<Vector2D, Scalar>> Engine<A> {
+    pub fn step_forward(self: &Engine<A>, universe: &Universe, dt: TemporalDuration) -> Universe {
         let mut new_bodies: Vec<Body> = Vec::with_capacity(universe.bodies.len());
         let mut indexes_of_deleted_bodies: HashSet<usize> = HashSet::new();
 
@@ -54,9 +56,12 @@ impl Engine {
 
             let acceleration = total_force / object_after_all_collisions.mass;
 
-            // TODO this should probably be injected
-            let new_velocity =
-                euler_method::next_velocity(acceleration, object_after_all_collisions.velocity, dt);
+            let new_velocity = Velocity(self.numerical_method.next_y(
+                |_, _| acceleration.0,
+                object_after_all_collisions.velocity.0,
+                universe.age.0,
+                dt.0,
+            ));
 
             let new_body = Body {
                 position: new_position,
@@ -69,6 +74,7 @@ impl Engine {
 
         Universe {
             bodies: new_bodies,
+            age: universe.age + dt,
             ..(*universe)
         }
     }

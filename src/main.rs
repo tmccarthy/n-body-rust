@@ -23,6 +23,7 @@ use crate::engine::metrics::Metric;
 use crate::engine::universe::{Body, Universe};
 use crate::engine::Engine;
 use crate::graphics::Transformed;
+use crate::physics::numerical_methods::OdeAlgorithm;
 use crate::physics::primitives::{Mass, Position, Scalar, TemporalDuration, Vector2D, Velocity};
 use crate::universes::Vector2DDistribution;
 use crate::viewport::Viewport;
@@ -57,7 +58,9 @@ fn main() {
         },
     );
     let time_scale: Scalar = 3e4;
-    let engine: Engine = Engine {};
+    let engine = Engine {
+        numerical_method: physics::numerical_methods::EulerMethod,
+    };
 
     let viewport_size = 4e8;
 
@@ -111,7 +114,7 @@ fn render<C: CharacterCache<Texture = Texture>>(
             context,
             character_cache,
             universe,
-            [Metric::NumBodies, Metric::KineticEnergy],
+            [Metric::NumBodies, Metric::KineticEnergy, Metric::Momentum],
         )
         .unwrap();
 
@@ -135,8 +138,8 @@ fn scale_radius_by(all_masses: &Range<Mass>, mass: Mass) -> graphics::math::Scal
         + MIN_RADIUS
 }
 
-fn ui_driven_update(
-    engine: &engine::Engine,
+fn ui_driven_update<A: OdeAlgorithm<Vector2D, Scalar>>(
+    engine: &engine::Engine<A>,
     time_scale: Scalar,
     old_universe: &Universe,
     args: &UpdateArgs,

@@ -22,6 +22,14 @@ impl Mul<Scalar> for TemporalDuration {
     }
 }
 
+impl Add<TemporalDuration> for TemporalDuration {
+    type Output = TemporalDuration;
+
+    fn add(self, rhs: TemporalDuration) -> Self::Output {
+        TemporalDuration(self.0 + rhs.0)
+    }
+}
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Mass(pub Scalar);
 

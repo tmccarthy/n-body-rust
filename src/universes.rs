@@ -26,6 +26,7 @@ pub fn pluto_and_charon() -> Universe {
             gravitational_constant: g,
         },
         bodies: vec![pluto, charon],
+        age: TemporalDuration(0.0),
     }
 }
 
@@ -52,6 +53,7 @@ pub fn random(
     Universe {
         gravity: Gravity::UNIVERSAL,
         bodies,
+        age: TemporalDuration(0.0),
     }
 }
 
