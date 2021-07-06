@@ -9,18 +9,19 @@ use font_kit::font::Font;
 use font_kit::handle::Handle;
 use font_kit::source::SystemSource;
 use glutin_window::GlutinWindow as Window;
-use graphics::{CharacterCache, clear, Context, Graphics, types};
 use graphics::ellipse::circle;
 use graphics::rectangle::centered_square;
-use opengl_graphics::{GlGraphics, GlyphCache, OpenGL, Texture};
+use graphics::{clear, types, CharacterCache, Context, Graphics};
 use opengl_graphics::TextureSettings;
-use piston::event_loop::{Events, EventSettings};
+use opengl_graphics::{GlGraphics, GlyphCache, OpenGL, Texture};
+use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
 use piston::window::WindowSettings;
 use rand::distributions::Uniform;
 
-use crate::engine::{Body, Universe};
 use crate::engine::metrics::Metric;
+use crate::engine::universe::{Body, Universe};
+use crate::engine::Engine;
 use crate::graphics::Transformed;
 use crate::physics::primitives::{Mass, Position, Scalar, TemporalDuration, Vector2D, Velocity};
 use crate::universes::Vector2DDistribution;
@@ -56,6 +57,7 @@ fn main() {
         },
     );
     let time_scale: Scalar = 3e4;
+    let engine: Engine = Engine {};
 
     let viewport_size = 4e8;
 
@@ -63,11 +65,17 @@ fn main() {
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
-            render(&mut graphics, &mut charachter_cache, &viewport, &universe, &args);
+            render(
+                &mut graphics,
+                &mut charachter_cache,
+                &viewport,
+                &universe,
+                &args,
+            );
         }
 
         if let Some(args) = e.update_args() {
-            universe = ui_driven_update(time_scale, &universe, &args);
+            universe = ui_driven_update(&engine, time_scale, &universe, &args);
             viewport = update_viewport_for(&universe, viewport_size);
         }
     }
@@ -98,8 +106,14 @@ fn render<C: CharacterCache<Texture = Texture>>(
     graphics.draw(args.viewport(), |context, graphics| {
         clear([0.0, 0.0, 0.0, 1.0], graphics);
 
-        draw_metrics(graphics, context, character_cache, universe, [Metric::NumBodies, Metric::KineticEnergy])
-            .unwrap();
+        draw_metrics(
+            graphics,
+            context,
+            character_cache,
+            universe,
+            [Metric::NumBodies, Metric::KineticEnergy],
+        )
+        .unwrap();
 
         for body in &universe.bodies {
             let (window_x, window_y) = viewport.convert_for_window(args, body.position);
@@ -121,10 +135,15 @@ fn scale_radius_by(all_masses: &Range<Mass>, mass: Mass) -> graphics::math::Scal
         + MIN_RADIUS
 }
 
-fn ui_driven_update(time_scale: Scalar, old_universe: &Universe, args: &UpdateArgs) -> Universe {
+fn ui_driven_update(
+    engine: &engine::Engine,
+    time_scale: Scalar,
+    old_universe: &Universe,
+    args: &UpdateArgs,
+) -> Universe {
     let ui_dt = TemporalDuration(args.dt);
     let dt = ui_dt * time_scale;
-    old_universe.step_forward(dt)
+    engine.step_forward(old_universe, dt)
 }
 
 fn update_viewport_for(universe: &Universe, viewport_size: Scalar) -> Viewport {
@@ -140,12 +159,20 @@ fn draw_metrics<C: CharacterCache<Texture = Texture>, const N: usize>(
     universe: &Universe,
     metrics: [Metric; N],
 ) -> Result<(), ()> {
-    let lines = metrics.iter()
+    let lines = metrics
+        .iter()
         .map(|m| format!("{}: {}", m.symbol(), m.compute_from(universe)));
 
     for (index, line) in lines.enumerate() {
-        graphics::text(graphics::color::WHITE, 10, &line, character_cache, context.trans(10.0, ((index + 1) as f64) * 10.0).transform, graphics)
-            .map_err(|_| ())?
+        graphics::text(
+            graphics::color::WHITE,
+            10,
+            &line,
+            character_cache,
+            context.trans(10.0, ((index + 1) as f64) * 10.0).transform,
+            graphics,
+        )
+        .map_err(|_| ())?
     }
 
     Ok(())

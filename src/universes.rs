@@ -1,4 +1,4 @@
-use crate::engine::{Body, Universe};
+use crate::engine::universe::{Body, Universe};
 use crate::physics::gravity::{GravitationalConstant, Gravity};
 use crate::physics::primitives::*;
 use core::iter;

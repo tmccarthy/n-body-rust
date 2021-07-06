@@ -1,6 +1,6 @@
 use core::ops;
-use std::fmt::{Display, Formatter};
 use std::fmt;
+use std::fmt::{Display, Formatter};
 use std::ops::Mul;
 
 use crate::physics::primitives::Scalar;

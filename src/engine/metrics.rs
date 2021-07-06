@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use crate::engine::Universe;
-use crate::physics::primitives::{Vector2D, Scalar};
+use crate::physics::primitives::{Scalar, Vector2D};
 
 pub enum Metric {
     NumBodies,
